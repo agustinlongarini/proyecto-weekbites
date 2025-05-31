@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario Tipo Dieta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/" class="logo">
+        <img src="/images/logo.png" alt="Logo">
+    </a>
+    <div class="navegacion">
+        <a href="#home">Inicio</a>
+        <a href="#about">Sobre nosotros</a>
+        <a href="#services">Servicios</a>
+        <a href="#contact">Contacto</a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="logout-button">
+                Salir
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="section">
+    <h2 class="section-title">Crear Tipo Dieta</h2>
+    <div class="contenido">
+        <form th:action="@{/dieta/crear}" th:object="${tipoDieta}" method="post">
+            <label>Nombre del Tipo de Dieta:</label>
+            <input type="text" th:field="*{nombreTD}"/>
+            <label>Descripción del Tipo de Dieta:</label>
+            <input type="text" th:field="*{descripcionTD}" />
+            <div class="fila">
+                <button class="confirm-button boton-volver" type="button" onclick="window.location.href='/dieta/listado'">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button class="confirm-button" type="submit" id="guardarBtn">Guardar tipo de dieta</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://kit.fontawesome.com/1b8cf50d7a.js" crossorigin="anonymous"></script>
+</body>
+</html>

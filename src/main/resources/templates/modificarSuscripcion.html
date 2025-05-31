@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modificar Suscripción</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/styles.css}">
+  <script>
+    function cargarLocalidades() {
+      var provinciaId = document.getElementById("provincia").value;
+
+      if (!provinciaId) return;
+
+      fetch(`/api/localidades?provinciaId=${provinciaId}`)
+              .then(response => response.json())
+              .then(localidades => {
+                var localidadSelect = document.getElementById("localidad");
+                localidadSelect.innerHTML = "";
+
+                var option = document.createElement("option");
+                option.value = "";
+                option.text = "Seleccionar localidad";
+                localidadSelect.appendChild(option);
+
+                const localidadSeleccionada = document.getElementById("localidadSeleccionada").value;
+
+                localidades.forEach(function(localidad) {
+                  var option = document.createElement("option");
+                  option.value = localidad.id;
+                  option.text = localidad.nombre;
+
+                  if (localidad.id == localidadSeleccionada) {
+                    option.selected = true;
+                  }
+
+                  localidadSelect.appendChild(option);
+                });
+              })
+              .catch(error => console.error("Error al cargar las localidades:", error));
+    }
+  </script>
+  <script>
+    function mostrarDireccion() {
+      const direccionSection = document.getElementById("direccionSection");
+      const formasEntrega = document.getElementsByName("formaEntrega");
+      let mostrarDireccion = false;
+      for (let i = 0; i < formasEntrega.length; i++) {
+        if (formasEntrega[i].checked) {
+          if (formasEntrega[i].value === 'Domicilio' || formasEntrega[i].value === 'Oficina' || formasEntrega[i].value === 'Institucion') {
+            mostrarDireccion = true;
+          }
+          break;
+        }
+      }
+      if (mostrarDireccion) {
+        direccionSection.style.display = "block";
+      } else {
+        direccionSection.style.display = "none";
+      }
+      const camposDireccion = ["calle", "numero", "provincia", "localidad"];
+      camposDireccion.forEach(id => {
+        const campo = document.getElementById(id);
+        if (campo) {
+          if (mostrarDireccion) {
+            campo.setAttribute("required", "required");
+          } else {
+            campo.removeAttribute("required");
+          }
+        }
+      });
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      const formasEntrega = document.getElementsByName("formaEntrega");
+      for (let i = 0; i < formasEntrega.length; i++) {
+        formasEntrega[i].addEventListener('change', mostrarDireccion);
+      }
+
+      mostrarDireccion();
+    });
+  </script>
+</head>
+<body onload="cargarLocalidades()">
+
+<div class="navbar">
+  <a href="/" class="logo">
+    <img src="/images/logo.png" alt="Logo">
+  </a>
+  <div class="navegacion">
+    <a href="#home">Inicio</a>
+    <a href="#about">Sobre nosotros</a>
+    <a href="#services">Servicios</a>
+    <a href="#contact">Contacto</a>
+    <form th:action="@{/logout}" method="post" class="logout-form">
+      <button type="submit" class="logout-button">
+        Salir
+      </button>
+    </form>
+  </div>
+</div>
+<div class="section">
+  <h2 class="section-title">Modificar suscripción</h2>
+  <form th:action="@{/suscripcion/{id}/modificar(id=${suscripcion.id})}" method="post" th:object="${suscripcion}">
+    <!-- Tipo de dieta -->
+    <div class="contenido">
+      <h3>Tipo de dieta</h3>
+      <div class="fila">
+        <th:block th:each="tipo : ${tiposDieta}">
+          <div class="tipo">
+            <label th:for="'tipo-' + ${tipo.id}">
+              <h4 th:text="${tipo.nombreTD}">Nombre dieta</h4>
+              <p th:text="${tipo.descripcionTD}">Descripción dieta</p>
+              <input
+                      type="radio"
+                      th:id="'tipo-' + ${tipo.id}"
+                      name="tipoDietaId"
+                      th:value="${tipo.id}"
+                      th:checked="${tipo.id} == ${suscripcion.tipoDieta.id}" required />
+            </label>
+          </div>
+        </th:block>
+      </div>
+    </div>
+
+    <!-- Frecuencia -->
+    <div class="contenido">
+      <h3>Frecuencia</h3>
+      <div class="fila">
+        <th:block th:each="dia : ${frecuencias}">
+          <div class="tipo">
+            <label th:for="'frecuencia-' + ${dia}">
+              <h4 th:text="${dia}">Día</h4>
+              <input
+                      type="checkbox"
+                      th:id="'frecuencia-' + ${dia}"
+                      name="frecuencias"
+                      th:value="${dia}"
+                      th:checked="${suscripcion.frecuencias.contains(dia)}" />
+            </label>
+          </div>
+        </th:block>
+      </div>
+      <p style="margin: 10px 0 5px; font-size: 1rem">
+        Seleccioná los días en los que querés recibir tu vianda. Podés elegir uno o varios días. <br>
+        Empezarás a recibir tus viandas la semana siguiente a la fecha en que completes este formulario.
+      </p>
+    </div>
+
+    <!-- Forma de entrega -->
+    <div class="contenido">
+      <h3>Forma de entrega</h3>
+      <div class="fila">
+        <th:block th:each="forma : ${formasEntrega}">
+          <div class="tipo">
+            <label th:for="'forma-' + ${forma}">
+              <h4 th:text="${forma}">Forma</h4>
+              <input
+                      type="radio"
+                      th:id="'forma-' + ${forma}"
+                      name="formaEntrega"
+                      th:value="${forma}"
+                      th:checked="${forma == suscripcion.formaEntrega}" required />
+            </label>
+          </div>
+        </th:block>
+      </div>
+      <p style="margin: 10px 0; font-size: 1rem">
+        Tené en cuenta que, dependiendo de la opción elegida, la disponibilidad y los tiempos de entrega pueden variar.
+      </p>
+    </div>
+
+    <!-- Dirección -->
+    <div class="contenido" id="direccionSection">
+      <h3>Dirección</h3>
+      <div class="fila">
+        <div class="campo">
+          <label for="calle">Calle:</label>
+          <input type="text" placeholder="Ingresa tu calle" id="calle" name="calle"
+                 th:value="${suscripcion.cliente.direccionActual.calle}" />
+        </div>
+        <div class="campo">
+          <label for="numero">Número:</label>
+          <input type="text" placeholder="Ingresa el número" id="numero" name="numero"
+                 th:value="${suscripcion.cliente.direccionActual.numero}" />
+        </div>
+      </div>
+      <div class="fila">
+        <div class="campo">
+          <label for="piso">Piso:</label>
+          <input type="text" placeholder="Opcional" id="piso" name="piso"
+                 th:value="${suscripcion.cliente.direccionActual.piso}" />
+        </div>
+        <div class="campo">
+          <label for="dpto">Dpto:</label>
+          <input type="text" placeholder="Opcional" id="dpto" name="dpto"
+                 th:value="${suscripcion.cliente.direccionActual.dpto}" />
+        </div>
+      </div>
+      <div class="fila">
+        <div class="campo">
+          <label for="provincia">Provincia:</label>
+          <select name="provinciaId" id="provincia" onchange="cargarLocalidades()">
+            <option value="">Seleccionar provincia</option>
+            <th:block th:each="provincia : ${provincias}">
+              <option th:value="${provincia.id}"
+                      th:text="${provincia.nombreProvincia}"
+                      th:selected="${provincia.id} == ${suscripcion.cliente.direccionActual.localidad.provincia.id}">
+              </option>
+            </th:block>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="localidad">Localidad:</label>
+          <select name="localidadId" id="localidad">
+            <option value="">Seleccionar localidad</option>
+          </select>
+        </div>
+        <input type="hidden" id="localidadSeleccionada" th:value="${suscripcion.cliente.direccionActual.localidad.id}" />
+      </div>
+    </div>
+
+    <!-- Comentarios -->
+    <div class="contenido">
+      <h3>Comentarios adicionales</h3>
+      <p style="margin: 10px 0; font-size: 1rem">
+        Contanos cualquier detalle que creas importante (alergias, gustos, exclusiones).
+      </p>
+      <textarea name="comentarios" placeholder="Tu mensaje" rows="4"
+                th:text="${suscripcion.comentarios}"></textarea>
+      <button class="confirm-button" type="submit">MODIFICAR SUSCRIPCIÓN</button>
+    </div>
+
+  </form>
+</div>
+<script src="https://kit.fontawesome.com/1b8cf50d7a.js" crossorigin="anonymous"></script>
+</body>
+</html>

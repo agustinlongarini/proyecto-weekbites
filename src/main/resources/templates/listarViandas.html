@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado viandas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/" class="logo">
+        <img src="/images/logo.png" alt="Logo">
+    </a>
+    <div class="navegacion">
+        <a href="#home">Inicio</a>
+        <a href="#about">Sobre nosotros</a>
+        <a href="#services">Servicios</a>
+        <a href="#contact">Contacto</a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="logout-button">
+                Salir
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="section">
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}" style="color: darkred; margin-top: 10px; text-align: left; background-color: #f8d7da; padding:10px; border-radius:4px;"></div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}" style="color: darkgreen; margin-top: 10px; text-align: left; background-color: #00cc88; padding: 10px; border-radius: 4px;"></div>
+    <h2 class="section-title">Listado de viandas</h2>
+    <div class="fila botones-lista">
+        <button class="confirm-button boton-volver" onclick="window.location.href='/admin'">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <button class="confirm-button" onclick="window.location.href='/vianda/crear'">
+            Crear vianda
+        </button>
+    </div>
+    <div class="contenido">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Tipo Dieta</th>
+                <th>Fecha Baja</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="vianda : ${viandas}">
+                <td th:text="${vianda.id}"></td>
+                <td th:text="${vianda.nombreVianda}"></td>
+                <td>
+                    <span th:each="tipoDieta, iterStat : ${vianda.tiposDieta}">
+                        <span th:text="${tipoDieta.nombreTD}"></span><span th:if="${!iterStat.last}">, </span>
+                    </span>
+                </td>
+                <td th:text="${vianda.fechaBaja}"></td>
+                <td class="celda-botones">
+                    <div class="botones-wrapper">
+                        <a th:href="@{'/vianda/' + ${vianda.id} + '/detalle'}" class="btn btn-historial" title="Ver Permisos">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                        <a th:href="@{'/vianda/' + ${vianda.id} + '/modificar'}" class="btn btn-modificar" title="Modificar Vianda">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <form th:if="${vianda.fechaBaja == null}" th:action="@{'/vianda/' + ${vianda.id} + '/baja'}" method="post">
+                            <button type="submit" class="btn btn-suspender" title="Dar de Baja Vianda">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                        <form th:if="${vianda.fechaBaja != null}" th:action="@{'/vianda/' + ${vianda.id} + '/reactivar'}" method="post">
+                            <button type="submit" class="btn btn-reactivar" title="Reactivar Vianda">
+                                <i class="fa-solid fa-recycle"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="https://kit.fontawesome.com/1b8cf50d7a.js" crossorigin="anonymous"></script>
+</body>
+</html>

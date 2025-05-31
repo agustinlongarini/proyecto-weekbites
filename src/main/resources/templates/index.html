@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <title>WeekBites</title>
+</head>
+
+<body class="body">
+
+<div class="navbar">
+    <a href="/" class="logo">
+        <img src="/images/logo.png" alt="Logo">
+    </a>
+    <div class="navegacion">
+        <a href="#home">Inicio</a>
+        <a href="#about">Sobre nosotros</a>
+        <a href="#services">Servicios</a>
+        <a href="#contact">Contacto</a>
+        <button class="signin-button" onclick="window.location.href='/login'">Ingresar</button>
+    </div>
+</div>
+
+<div class="hero">
+    <div class="hero-text">
+        <h1>El placer de comer bien, todos los días de la semana.</h1>
+        <p>Personaliza tus viandas, elige la opción que más te guste y
+            recibe tus comidas frescas en tu hogar, oficina o donde lo prefieras.
+            ¡Disfruta de una experiencia gastronómica saludable y a tu medida!</p>
+        <br>
+        <button class="suscribe-button" onclick="window.location.href='/suscripcion'">SUSCRÍBITE</button>
+    </div>
+    <div class="hero-image">
+        <img src="/images/viandas.png" alt="Viandas">
+    </div>
+</div>
+
+<div class="section" id="about">
+    <h2 class="section-title">Sobre nosotros</h2>
+    <div class="contenido">
+        <p>WeekBites es un sistema de gestión de viandas por suscripción diseñado
+            para ofrecerte una experiencia única, saludable y adaptada a tus necesidades.
+            Nuestro objetivo es facilitar la planificación de tus comidas, permitiéndote
+            elegir entre una variedad de dietas y menús semanales, con entregas programadas
+            directamente a tu puerta. Nos enorgullece ofrecer opciones personalizadas para
+            cada tipo de dieta y estilo de vida, garantizando ingredientes frescos y de
+            calidad en cada vianda. Ya sea que busques comer más saludable, seguir una
+            dieta específica o simplemente ahorrar tiempo en la cocina, WeekBites está
+            aquí para ayudarte a disfrutar de una alimentación balanceada sin esfuerzo.</p>
+        <div class="about-image">
+            <img src="/images/cocina.png" alt="cocina">
+        </div>
+    </div>
+</div>
+
+<div class="section" id="services">
+    <h2 class="section-title">Servicios</h2>
+    <div class="contenido">
+        <p>En WeekBites, ofrecemos una experiencia gastronómica única que te permite disfrutar de comida saludable y deliciosa todos los días. Aquí te mostramos todos los beneficios de nuestro servicio:</p>
+        <p><strong>1. Suscripción Personalizada:</strong> Te ofrecemos un sistema de suscripción flexible donde puedes elegir entre diferentes tipos de dieta, frecuencias de entrega y horarios, adaptados a tus necesidades y preferencias. Si tienes alguna restricción alimentaria o simplemente prefieres una dieta más equilibrada, tenemos opciones para ti.</p>
+        <p><strong>2. Menús Semanales:</strong> Cada semana, diseñamos menús variados y saludables, creados con ingredientes frescos y de alta calidad. Nuestros menús son fáciles de adaptar según tus gustos y necesidades nutricionales, asegurando que siempre tengas algo delicioso y nutritivo.</p>
+        <p><strong>3. Entregas Puntuales:</strong> Nos encargamos de que tus viandas lleguen directamente a tu puerta, en el día y la hora acordada. Puedes contar con nosotros para disfrutar de tus comidas preparadas sin tener que preocuparte por los horarios o la planificación.</p>
+        <p><strong>4. Gestión de Preferencias:</strong> A través de tu cuenta en WeekBites, podrás gestionar tus preferencias, revisar tu historial de pedidos y ajustar tu suscripción en cualquier momento, asegurando que siempre recibas exactamente lo que deseas.</p>
+        <p><strong>5. Soporte al Cliente:</strong> Nuestro equipo de soporte está siempre disponible para resolver cualquier duda o inquietud que puedas tener. Ya sea que necesites ayuda con tu suscripción, ajustes en tus pedidos o alguna consulta general, estamos aquí para brindarte asistencia rápida y eficiente.</p>
+    </div>
+</div>
+
+<div class="section" id="contact">
+    <h2 class="section-title">Contacto</h2>
+    <div class="contenido">
+        <p>¿Tienes alguna pregunta o quieres más información? ¡Estamos aquí para ayudarte! Completa el formulario y nos pondremos en contacto contigo.</p>
+        <form>
+            <input type="text" placeholder="Tu nombre" required>
+            <input type="email" placeholder="Tu correo" required>
+            <textarea placeholder="Tu mensaje" rows="4" required></textarea>
+            <button class="confirm-button" type="submit">Enviar mensaje</button>
+        </form>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>&copy; 2025 WeekBites. Todos los derechos reservados.</p>
+</footer>
+
+</body>
+</html>

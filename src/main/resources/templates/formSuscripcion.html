@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Formulario suscripción</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <script>
+        function cargarLocalidades() {
+            var provinciaId = document.getElementById("provincia").value;
+
+            if (!provinciaId) return;
+
+            fetch(`/api/localidades?provinciaId=${provinciaId}`)
+                .then(response => response.json())
+                .then(localidades => {
+                    var localidadSelect = document.getElementById("localidad");
+                    localidadSelect.innerHTML = "";
+
+                    var option = document.createElement("option");
+                    option.value = "";
+                    option.text = "Seleccionar localidad";
+                    localidadSelect.appendChild(option);
+
+                    localidades.forEach(function(localidad) {
+                        var option = document.createElement("option");
+                        option.value = localidad.id;
+                        option.text = localidad.nombre;
+                        localidadSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error al cargar las localidades:", error));
+        }
+    </script>
+    <script>
+        function mostrarDireccion() {
+            const direccionSection = document.getElementById("direccionSection");
+            const formasEntrega = document.getElementsByName("formaEntrega");
+            let mostrarDireccion = false;
+            for (let i = 0; i < formasEntrega.length; i++) {
+                if (formasEntrega[i].checked) {
+                    if (formasEntrega[i].value === 'Domicilio' || formasEntrega[i].value === 'Oficina' || formasEntrega[i].value === 'Institucion') {
+                        mostrarDireccion = true;
+                    }
+                    break;
+                }
+            }
+            if (mostrarDireccion) {
+                direccionSection.style.display = "block";
+            } else {
+                direccionSection.style.display = "none";
+            }
+            const camposDireccion = ["calle", "numero", "provincia", "localidad"];
+            camposDireccion.forEach(id => {
+                const campo = document.getElementById(id);
+                if (campo) {
+                    if (mostrarDireccion) {
+                        campo.setAttribute("required", "required");
+                    } else {
+                        campo.removeAttribute("required");
+                    }
+                }
+            });
+        }
+        window.addEventListener('DOMContentLoaded', function() {
+            const formasEntrega = document.getElementsByName("formaEntrega");
+            for (let i = 0; i < formasEntrega.length; i++) {
+                formasEntrega[i].addEventListener('change', mostrarDireccion);
+            }
+
+            mostrarDireccion();
+        });
+    </script>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/" class="logo">
+        <img src="/images/logo.png" alt="Logo">
+    </a>
+    <div class="navegacion">
+        <a href="#home">Inicio</a>
+        <a href="#about">Sobre nosotros</a>
+        <a href="#services">Servicios</a>
+        <a href="#contact">Contacto</a>
+        <button class="signin-button" onclick="window.location.href='/login'">Ingresar</button>
+    </div>
+</div>
+
+<div class="section" id="formulario">
+    <h2 class="section-title">Suscribirse</h2>
+    <form th:action="@{/suscripcion}" method="post" th:object="${suscripcionDTO}" id="formSuscripcion">
+        <div class="contenido">
+            <h3>Información personal</h3>
+            <div class="fila">
+                <div class="campo">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ingresá tu nombre" required th:value="${suscripcionDTO.nombre}" />
+                    <div th:if="${#fields.hasErrors('nombre')}" class="error">
+                        <span th:errors="*{nombre}">Nombre inválido</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" id="apellido" name="apellido" placeholder="Ingresá tu apellido" required th:value="${suscripcionDTO.apellido}" />
+                    <div th:if="${#fields.hasErrors('apellido')}" class="error">
+                        <span th:errors="*{apellido}">Apellido inválido</span>
+                    </div>
+                </div>
+            </div>
+            <div class="fila">
+                <div class="campo">
+                    <label for="dni">Documento de identidad:</label>
+                    <input type="text" id="dni" name="dni" placeholder="Ingresá tu DNI" required pattern="\d{7,8}" th:value="${suscripcionDTO.dni}" />
+                    <div th:if="${#fields.hasErrors('dni')}" class="error">
+                        <span th:errors="*{dni}">DNI inválido</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="fechaNacimiento">Fecha Nacimiento:</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" placeholder="Seleccioná tu fecha" required th:value="${suscripcionDTO.fechaNacimiento}" />
+                    <div th:if="${#fields.hasErrors('fechaNacimiento')}" class="error">
+                        <span th:errors="*{fechaNacimiento}">Fecha de nacimiento inválida</span>
+                    </div>
+                </div>
+            </div>
+            <div class="fila">
+                <div class="campo">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono" name="telefono" placeholder="Ingresá tu teléfono" required pattern="^\d+$" th:value="${suscripcionDTO.telefono}"/>
+                    <div th:if="${#fields.hasErrors('telefono')}" class="error">
+                        <span th:errors="*{telefono}">Fecha de nacimiento inválida</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="email">Correo electrónico:</label>
+                    <input type="email" id="email" name="email" placeholder="Ingresá tu email" required th:value="${suscripcionDTO.email}" />
+                    <div th:if="${#fields.hasErrors('email')}" class="error">
+                        <span th:errors="*{email}">Email inválido</span>
+                    </div>
+                </div>
+            </div>
+            <div class="fila">
+                <div class="campo">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" placeholder="Elegí una contraseña" required th:value="${suscripcionDTO.password}" />
+                    <div th:if="${#fields.hasErrors('password')}" class="error">
+                        <span th:errors="*{password}">Contraseña inválida</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="password2">Repetir Contraseña:</label>
+                    <input type="password" id="password2" name="password2" placeholder="Repetí la contraseña" required th:value="${suscripcionDTO.password2}" />
+                    <div th:if="${#fields.hasErrors('password2')}" class="error">
+                        <span th:errors="*{password2}">Las contraseñas no coinciden</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="contenido">
+            <h3>Tipo de dieta</h3>
+            <div class="fila">
+                <th:block th:each="tipo : ${tiposDieta}">
+                    <div class="tipo">
+                        <label th:for="'tipo-' + ${tipo.id}">
+                            <h4 th:text="${tipo.nombreTD}">Nombre dieta</h4>
+                            <p th:text="${tipo.descripcionTD}">Descripción dieta</p>
+                            <input
+                                    type="radio"
+                                    th:id="'tipo-' + ${tipo.id}"
+                                    name="tipoDietaId"
+                                    th:value="${tipo.id}"
+                                    required />
+                        </label>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+        <div class="contenido">
+            <h3>Frecuencia</h3>
+            <div class="fila">
+                <th:block th:each="dia : ${frecuencias}">
+                    <div class="tipo">
+                        <label th:for="'frecuencia-' + ${dia}">
+                            <h4 th:text="${dia}">Día</h4>
+                            <input
+                                    type="checkbox"
+                                    th:id="'frecuencia-' + ${dia}"
+                                    name="frecuencias"
+                                    th:value="${dia}" />
+                        </label>
+                    </div>
+                </th:block>
+            </div>
+            <div th:if="${#fields.hasErrors('frecuencias')}" class="error">
+                <span th:errors="*{frecuencias}">Debe seleccionar al menos un día de frecuencia</span>
+            </div>
+            <p style="margin: 10px 0 5px; font-size: 1rem">
+                Seleccioná los días en los que querés recibir tu vianda. Podés elegir uno o varios días. <br>
+                Empezarás a recibir tus viandas la semana siguiente a la fecha en que completes este formulario.
+            </p>
+        </div>
+        <div class="contenido">
+            <h3>Forma de entrega</h3>
+            <div class="fila">
+                <th:block th:each="forma : ${formasEntrega}">
+                    <div class="tipo">
+                        <label th:for="'forma-' + ${forma}">
+                            <h4 th:text="${forma}">Forma</h4>
+                            <input
+                                    type="radio"
+                                    th:id="'forma-' + ${forma}"
+                                    name="formaEntrega"
+                                    th:value="${forma}"
+                                    required />
+                        </label>
+                    </div>
+                </th:block>
+            </div>
+            <p style="margin: 10px 0; font-size: 1rem">
+                Ten en cuenta que, dependiendo de la opción elegida, la disponibilidad y los tiempos de entrega pueden variar.
+            </p>
+        </div>
+        <div class="contenido" id="direccionSection" style="display: none;">
+            <h3>Dirección</h3>
+            <div class="fila">
+                <div class="campo">
+                    <label for="calle">Calle:</label>
+                    <input type="text" placeholder="Ingresa tu calle" id="calle" name="calle" />
+                </div>
+                <div class="campo">
+                    <label for="numero">Número:</label>
+                    <input type="text" placeholder="Ingresa el número" id="numero" name="numero" />
+                </div>
+            </div>
+            <div class="fila">
+                <div class="campo">
+                    <label for="piso">Piso:</label>
+                    <input type="text" placeholder="Opcional" id="piso" name="piso" />
+                </div>
+                <div class="campo">
+                    <label for="dpto">Dpto:</label>
+                    <input type="text" placeholder="Opcional" id="dpto" name="dpto" />
+                </div>
+            </div>
+            <div class="fila">
+                <div class="campo">
+                    <label for="provincia">Provincia:</label>
+                    <select name="provinciaId" id="provincia" onchange="cargarLocalidades()">
+                        <option value="">Seleccionar provincia</option>
+                        <th:block th:each="provincia : ${provincias}">
+                            <option th:value="${provincia.id}" th:text="${provincia.nombreProvincia}"></option>
+                        </th:block>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="localidad">Localidad:</label>
+                    <select name="localidadId" id="localidad">
+                        <option value="">Seleccionar localidad</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="contenido">
+            <h3>Comentarios adicionales</h3>
+            <p style="margin: 10px 0; font-size: 1rem">Contanos cualquier detalle que creas importante (alergias, gustos, exclusiones).</p>
+            <textarea name="comentarios" placeholder="Tu mensaje" rows="4" required></textarea>
+            <button class="confirm-button" type="submit">FINALIZAR SUSCRIPCIÓN</button>
+        </div>
+    </form>
+</div>
+<script src="https://kit.fontawesome.com/1b8cf50d7a.js" crossorigin="anonymous"></script>
+</body>
+</html>

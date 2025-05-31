@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial Suscripción</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/" class="logo">
+        <img src="/images/logo.png" alt="Logo">
+    </a>
+    <div class="navegacion">
+        <a href="#home">Inicio</a>
+        <a href="#about">Sobre nosotros</a>
+        <a href="#services">Servicios</a>
+        <a href="#contact">Contacto</a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="logout-button">
+                Salir
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="section">
+    <h2 class="section-title">Historial</h2>
+    <div class="contenido">
+        <table>
+            <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Tipo de dieta</th>
+                <th>Frecuencia</th>
+                <th>Dirección</th>
+                <th>Comentarios</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="registro : ${historial}">
+                <td th:text="${registro.fechaCambio}"></td>
+                <td th:text="${registro.tipoDietaNombre}"></td>
+                <td th:text="${registro.frecuencias}"></td>
+                <td th:text="${registro.direccionResumen}"></td>
+                <td th:text="${registro.comentarios}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="https://kit.fontawesome.com/1b8cf50d7a.js" crossorigin="anonymous"></script>
+</body>
+</html>

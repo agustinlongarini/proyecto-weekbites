@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Modificar Menú Semanal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles.css}" href="styles.css">
+    <script src="https://kit.fontawesome.com/1b8cf50d7a.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="navbar">
+    <a href="/" class="logo">
+        <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="Logo">
+    </a>
+    <div class="navegacion">
+        <a href="#home">Inicio</a>
+        <a href="#about">Sobre nosotros</a>
+        <a href="#services">Servicios</a>
+        <a href="#contact">Contacto</a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="logout-button">Salir</button>
+        </form>
+    </div>
+</div>
+
+<div class="section">
+    <h2 class="section-title">Modificar Menú Semanal</h2>
+    <div class="contenido">
+        <form th:action="@{/menus/{id}/modificar(id=${menu .id})}" method="post" id="form-menu-semanal">
+            <input type="hidden" name="id" th:value="${menu.id}" />
+            <h3 th:text="${menu.tipoDieta.nombreTD + ' - Semana ' + menu.semana}"></h3>
+            <div class="flex-container">
+                <div class="viandas-section">
+                    <h3>Viandas</h3>
+                    <input type="text" id="buscadorViandas" placeholder="Buscar viandas..." />
+                    <div id="lista-viandas">
+                        <div th:each="vianda : ${viandas}"
+                             th:data-id="${vianda.id}"
+                             th:data-nombre="${vianda.nombreVianda}"
+                             th:text="${vianda.nombreVianda}"
+                             draggable="true"
+                             class="vianda-item">
+                        </div>
+                    </div>
+                </div>
+                <div class="dias-section">
+                    <h3>Menú semanal</h3>
+                    <div class="dias-calendario">
+                        <div class="dia"
+                             th:each="dia : ${T(com.longstudios.weekbites.enums.Frecuencia).values()}"
+                             th:if="${#lists.contains({'lunes', 'martes', 'miercoles', 'jueves', 'viernes'}, dia.name().toLowerCase())}"
+                             th:attr="data-dia=${dia.name().toLowerCase()}">
+                            <h4 th:text="${#strings.capitalize(dia.name().toLowerCase())}"></h4>
+                            <div class="zona-drop" th:id="${'drop_' + dia.name().toLowerCase()}">
+                                <div th:if="${menu.viandasPorDia[dia.name().toLowerCase()] != null}"
+                                     th:text="${menu.viandasPorDia[dia.name().toLowerCase()].nombreVianda}"
+                                     th:data-id="${menu.viandasPorDia[dia.name().toLowerCase()].id}"
+                                     class="vianda-item"
+                                     style="background-color: #e6ffe6; border: 1px solid #007744; cursor: pointer;">
+                                </div>
+                            </div>
+                            <input type="hidden"
+                                   th:name="${'dia_' + dia.name().toLowerCase() + 'ViandaId'}"
+                                   th:id="${'hidden_' + dia.name().toLowerCase()}"
+                                   th:value="${menu.viandasPorDia[dia.name().toLowerCase()] != null ? menu.viandasPorDia[dia.name().toLowerCase()].id : ''}" />
+                        </div>
+                    </div>
+                    <div id="validationErrorContainer" style="display:none;">
+                        <p id="validationErrorMessageText" class="validation-error-message"></p>
+                    </div>
+                    <div th:if="${error}" class="alert alert-danger"
+                         style="color: darkred; margin-top: 10px; text-align: left; background-color: #f8d7da; padding:10px; border-radius:4px;">
+                        <div th:text="${error}"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fila">
+                <button class="confirm-button boton-volver" type="button" onclick="window.location.href='/menus/listado'">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="confirm-button" type="submit" id="guardarBtn">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const viandas = document.querySelectorAll('#lista-viandas .vianda-item');
+        const zonasDrop = document.querySelectorAll('.zona-drop');
+        const buscadorViandasInput = document.getElementById('buscadorViandas');
+        const validationErrorContainer = document.getElementById('validationErrorContainer');
+        const validationErrorMessageText = document.getElementById('validationErrorMessageText');
+
+        function mostrarErrorValidacion(mensaje) {
+            validationErrorMessageText.textContent = mensaje;
+            validationErrorContainer.style.display = 'block';
+        }
+
+        function ocultarErrorValidacion() {
+            validationErrorContainer.style.display = 'none';
+            validationErrorMessageText.textContent = '';
+        }
+
+        function checkFormularioCompleto() {
+            return [...zonasDrop].every(z => z.children.length > 0);
+        }
+
+        document.getElementById('form-menu-semanal').addEventListener('submit', function(event) {
+            ocultarErrorValidacion();
+            if (!checkFormularioCompleto()) {
+                event.preventDefault();
+                mostrarErrorValidacion("Debe asignar una vianda a cada día de la semana (Lunes a Viernes).");
+            }
+        });
+
+        viandas.forEach(vianda => {
+            vianda.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text/id', vianda.dataset.id);
+                e.dataTransfer.setData('text/nombre', vianda.dataset.nombre || vianda.textContent);
+            });
+        });
+
+        zonasDrop.forEach(zona => {
+            zona.addEventListener('dragover', e => {
+                e.preventDefault();
+                zona.style.backgroundColor = '#e0f0e0';
+            });
+
+            zona.addEventListener('dragleave', () => {
+                zona.style.backgroundColor = '';
+            });
+
+            zona.addEventListener('drop', e => {
+                e.preventDefault();
+                zona.style.backgroundColor = '';
+                ocultarErrorValidacion();
+
+                zona.innerHTML = '';
+
+                const id = e.dataTransfer.getData('text/id');
+                const name = e.dataTransfer.getData('text/nombre');
+
+                const div = document.createElement('div');
+                div.textContent = name;
+                div.className = 'vianda-item';
+                div.style.backgroundColor = '#e6ffe6';
+                div.style.border = '1px solid #007744';
+                div.style.cursor = 'pointer';
+                div.dataset.id = id;
+
+                div.addEventListener('click', () => {
+                    div.remove();
+                    actualizarHidden(zona, '');
+                    ocultarErrorValidacion();
+                });
+
+                zona.appendChild(div);
+                actualizarHidden(zona, id);
+            });
+        });
+
+        function actualizarHidden(zona, viandaId) {
+            const hiddenInputId = 'hidden_' + zona.id.split('_')[1];
+            const input = document.getElementById(hiddenInputId);
+            if (input) input.value = viandaId;
+        }
+
+        buscadorViandasInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            viandas.forEach(vianda => {
+                const nombre = (vianda.dataset.nombre || vianda.textContent).toLowerCase();
+                vianda.style.display = nombre.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    });
+</script>
+</body>
+</html>
