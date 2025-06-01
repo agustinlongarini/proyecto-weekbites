@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Generar entregas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poetsen+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles.css}" href="styles.css"> <script src="https://kit.fontawesome.com/1b8cf50d7a.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/" class="logo">
+        <img th:src="@{/images/logo.png}" src="/images/logo.png" alt="Logo">
+    </a>
+    <div class="navegacion">
+        <a href="#home">Inicio</a>
+        <a href="#about">Sobre nosotros</a>
+        <a href="#services">Servicios</a>
+        <a href="#contact">Contacto</a>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="logout-button">Salir</button>
+        </form>
+    </div>
+</div>
+<div class="section">
+    <h2 class="section-title">Generar entregas</h2>
+    <div class="contenido">
+        <form th:action="@{/entrega/generar}" method="post" onsubmit="return validarSemanaSeleccionada()">
+            <label for="semanaMenuVisual">Seleccionar semana:</label>
+            <input type="week" id="semanaMenuVisual" name="semanaMenuVisual" onchange="actualizarCamposSemana()" required>
+            <input type="hidden" id="semana" name="semana">
+            <input type="hidden" id="anio" name="anio">
+            <div class="fila">
+                <button class="confirm-button boton-volver" type="button" onclick="window.location.href='/entrega/listado'">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="confirm-button" type="submit" id="guardarBtn">
+                    Generar entregas
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    function actualizarCamposSemana() {
+        const weekValue = document.getElementById('semanaMenuVisual').value;
+
+        if (weekValue) {
+            const parts = weekValue.split('-W');
+            const anio = parseInt(parts[0], 10);
+            const semana = parseInt(parts[1], 10);
+
+            document.getElementById('semana').value = semana;
+            document.getElementById('anio').value = anio;
+        }
+    }
+
+    function validarSemanaSeleccionada() {
+        const semanaSeleccionada = document.getElementById('semanaMenuVisual').value;
+
+        if (!semanaSeleccionada) {
+            alert("Por favor, selecciona una semana.");
+            return false;
+        }
+
+        actualizarCamposSemana();
+
+        return true;
+    }
+</script>
+</body>
+</html>

@@ -43,6 +43,7 @@
             <tr>
                 <th>ID</th>
                 <th>Semana</th>
+                <th>Año</th>
                 <th>Tipo de dieta</th>
                 <th>Acciones</th>
             </tr>
@@ -51,6 +52,7 @@
             <tr th:each="menu : ${menus}">
                 <td th:text="${menu.id}"></td>
                 <td th:text="${menu.semana}"></td>
+                <td th:text="${menu.anio}"></td>
                 <td th:text="${menu.tipoDieta.nombreTD}"></td>
                 <td class="celda-botones">
                     <div class="botones-wrapper">

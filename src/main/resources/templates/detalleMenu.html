@@ -33,7 +33,7 @@
             <div class="dias-section" style="flex: 1 1 100%;">
                 <div class="dias-calendario">
                     <div class="dia" th:each="diaMenu : ${menu.dias}">
-                        <h4 th:text="${diaMenu.diaSemana}">Lunes</h4>
+                        <h4 th:text="${diaMenu.diaSemana}"></h4>
                         <div class="menu-vianda" th:if="${diaMenu.vianda != null}">
                             <h4 th:text="${diaMenu.vianda.nombreVianda}"></h4>
                             <p th:text="${diaMenu.vianda.descripcionVianda}"></p>

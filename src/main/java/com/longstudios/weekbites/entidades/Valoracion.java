@@ -17,12 +17,8 @@ public class Valoracion {
     private double puntuacion;
     private String comentario;
 
-    @ManyToOne
-    @JoinColumn(name = "vianda_id")
-    private Vianda vianda;
-
-    @ManyToOne
-    @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    @OneToOne
+    @JoinColumn(name = "entrega_id", nullable = false)
+    private Entrega entrega;
 
 }

@@ -34,13 +34,14 @@ public class MenuSemanalController {
     @PostMapping("/crear")
     public String procesarMenu(
             @RequestParam("semana") int semana,
+            @RequestParam("anio") int anio,
             @RequestParam("tipoDietaId") Long tipoDietaId,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes
     ) {
         try {
             Map<String, String[]> parametros = request.getParameterMap();
-            menuSemanalService.crearMenu(semana, tipoDietaId, parametros);
+            menuSemanalService.crearMenu(semana, anio, tipoDietaId, parametros);
             return "redirect:/menus/listado";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

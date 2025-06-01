@@ -20,10 +20,11 @@ public class MenuSemanalService {
     private final TipoDietaService tipoDietaService;
     private final ViandaService viandaService;
 
-    public void crearMenu(int semana, Long tipoDietaId, Map<String, String[]> parametros) {
+    public void crearMenu(int semana, int anio, Long tipoDietaId, Map<String, String[]> parametros) {
         TipoDieta tipoDieta = tipoDietaService.obtenerTipoDietaPorId(tipoDietaId);
         MenuSemanal menu = new MenuSemanal();
         menu.setSemana(semana);
+        menu.setAnio(anio);
         menu.setTipoDieta(tipoDieta);
         List<DiaMenu> dias = new ArrayList<>();
         for (Frecuencia dia : Frecuencia.values()) {

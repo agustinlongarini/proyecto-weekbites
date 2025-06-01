@@ -5,13 +5,7 @@ public enum Frecuencia {
     Lunes, Martes, Miercoles, Jueves, Viernes;
 
     public static Frecuencia fromString(String nombre) {
-        return switch (nombre) {
-            case "Lunes" -> Lunes;
-            case "Martes" -> Martes;
-            case "Miercoles" -> Miercoles;
-            case "Jueves" -> Jueves;
-            case "Viernes" -> Viernes;
-            default -> throw new IllegalArgumentException("Día no válido");
-        };
+        String formatted = nombre.substring(0, 1).toUpperCase() + nombre.substring(1).toLowerCase();
+        return Frecuencia.valueOf(formatted);
     }
 }

@@ -20,7 +20,6 @@ public class RolController {
     private final RolService rolService;
     private final PermisoService permisoService;
 
-
     @GetMapping("/crear")
     public String mostrarFormularioRol(Model model){
         List<Permiso> permisos = permisoService.obtenerPermisos();
